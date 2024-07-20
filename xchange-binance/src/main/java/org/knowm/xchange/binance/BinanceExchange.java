@@ -107,7 +107,7 @@ public class BinanceExchange extends BaseExchange implements Exchange {
       BinanceAccountService accountService = (BinanceAccountService) getAccountService();
       Map<String, AssetDetail> assetDetailMap = null;
       if (!usingSandbox() && isAuthenticated()) {
-        assetDetailMap = accountService.getAssetDetails(); // not available in sndbox
+//        assetDetailMap = accountService.getAssetDetails(); // not available in sndbox
       }
 
       BinanceExchangeInfo exchangeInfo;
