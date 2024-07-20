@@ -30,7 +30,7 @@ public final class BinanceOrder {
       @JsonProperty("price") BigDecimal price,
       @JsonProperty("origQty") BigDecimal origQty,
       @JsonProperty("executedQty") BigDecimal executedQty,
-      @JsonProperty("cummulativeQuoteQty") BigDecimal cummulativeQuoteQty,
+      @JsonProperty("cumQuote") BigDecimal cummulativeQuoteQty,
       @JsonProperty("status") OrderStatus status,
       @JsonProperty("timeInForce") TimeInForce timeInForce,
       @JsonProperty("type") OrderType type,

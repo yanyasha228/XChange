@@ -88,7 +88,15 @@ public class BinanceMarketDataServiceRaw extends BinanceBaseService {
     return klines(pair, interval, 1, null, null).stream().collect(StreamUtils.singletonCollector());
   }
 
+  public BinanceKline lastKline(Instrument pair, KlineInterval interval) throws IOException {
+    return klines(pair, interval, 1, null, null).stream().collect(StreamUtils.singletonCollector());
+  }
+
   public List<BinanceKline> klines(CurrencyPair pair, KlineInterval interval) throws IOException {
+    return klines(pair, interval, null, null, null);
+  }
+
+  public List<BinanceKline> klines(Instrument pair, KlineInterval interval) throws IOException {
     return klines(pair, interval, null, null, null);
   }
 
@@ -100,6 +108,27 @@ public class BinanceMarketDataServiceRaw extends BinanceBaseService {
                 () ->
                     binance.klines(
                         BinanceAdapters.toSymbol(pair), interval.code(), limit, startTime, endTime))
+            .withRetry(retry("klines"))
+            .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER))
+            .call();
+    return raw.stream()
+        .map(obj -> new BinanceKline(pair, interval, obj))
+        .collect(Collectors.toList());
+  }
+
+  public List<BinanceKline> klines(
+      Instrument pair, KlineInterval interval, Integer limit, Long startTime, Long endTime)
+      throws IOException {
+    List<Object[]> raw =
+        decorateApiCall(
+            () ->
+                (pair instanceof FuturesContract) ?
+                    binanceFutures.klines(
+                        BinanceAdapters.toSymbol(pair), interval.code(), limit, startTime, endTime)
+
+                    :
+                        binance.klines(
+                            BinanceAdapters.toSymbol(pair), interval.code(), limit, startTime, endTime))
             .withRetry(retry("klines"))
             .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER))
             .call();

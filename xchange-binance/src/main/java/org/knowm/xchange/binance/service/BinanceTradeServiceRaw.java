@@ -32,6 +32,33 @@ public class BinanceTradeServiceRaw extends BinanceBaseService {
     return openOrdersAllProducts(null);
   }
 
+  public List<BinanceOrder> allOrders(Instrument pair)
+      throws BinanceException, IOException {
+
+    return decorateApiCall(
+        () ->
+            (pair instanceof FuturesContract)
+                ?
+                binanceFutures.futureAllOrders(
+                    Optional.of(pair).map(BinanceAdapters::toSymbol).orElse(null),
+                    getRecvWindow(),
+                    getTimestampFactory(),
+                    apiKey,
+                    signatureCreator)
+                : binance.allOrders(
+                    Optional.ofNullable(pair).map(BinanceAdapters::toSymbol).orElse(null),
+                    null,
+                    null,
+                    getRecvWindow(),
+                    getTimestampFactory(),
+                    apiKey,
+                    signatureCreator))
+        .withRetry(retry("allOrders"))
+        .withRateLimiter(rateLimiter(REQUEST_WEIGHT_RATE_LIMITER))
+        .call();
+
+  }
+
   public List<BinanceOrder> openOrdersAllProducts(Instrument pair)
       throws BinanceException, IOException {
     if (exchange.isPortfolioMarginEnabled()) {

@@ -19,6 +19,16 @@ public interface BinanceFuturesAuthenticated extends BinanceFutures {
   String SIGNATURE = "signature";
   String X_MBX_APIKEY = "X-MBX-APIKEY";
 
+  @GET
+  @Path("fapi/v1/klines")
+  List<Object[]> klines(
+      @QueryParam("symbol") String symbol,
+      @QueryParam("interval") String interval,
+      @QueryParam("limit") Integer limit,
+      @QueryParam("startTime") Long startTime,
+      @QueryParam("endTime") Long endTime)
+      throws IOException, BinanceException;
+
   /**
    * Get current futures account information.
    *
@@ -320,6 +330,17 @@ public interface BinanceFuturesAuthenticated extends BinanceFutures {
   @GET
   @Path("fapi/v1/openOrders")
   List<BinanceOrder> futureOpenOrders(
+      @QueryParam("symbol") String symbol,
+      @QueryParam("recvWindow") Long recvWindow,
+      @QueryParam("timestamp") SynchronizedValueFactory<Long> timestamp,
+      @HeaderParam(X_MBX_APIKEY) String apiKey,
+      @QueryParam(SIGNATURE) ParamsDigest signature)
+      throws IOException, BinanceException;
+
+
+  @GET
+  @Path("fapi/v1/allOrders")
+  List<BinanceOrder> futureAllOrders(
       @QueryParam("symbol") String symbol,
       @QueryParam("recvWindow") Long recvWindow,
       @QueryParam("timestamp") SynchronizedValueFactory<Long> timestamp,
